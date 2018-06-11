@@ -42,7 +42,7 @@ namespace PacodelaCruz.DurableFunctions.Approval
             }
             else
             {
-                return new HttpResponseMessage(HttpStatusCode.BadRequest) { Content = new StringContent("Whoops! Something went wrong! :(") };
+                return new HttpResponseMessage(HttpStatusCode.BadRequest) { Content = new StringContent("Whoops! This application has expired or been processed! :(") };
             }
         }
     }

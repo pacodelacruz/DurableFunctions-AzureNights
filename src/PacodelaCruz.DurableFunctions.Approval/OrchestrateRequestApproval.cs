@@ -74,7 +74,9 @@ namespace PacodelaCruz.DurableFunctions.Approval
 
                 // This event can come from a click on the Email sent via SendGrid or a selection on the message sent via Slack. 
                 Task<bool> approvalResponse = context.WaitForExternalEvent<bool>("ReceiveApprovalResponse");
+
                 Task winner = await Task.WhenAny(approvalResponse, timeoutTask);
+
                 ApprovalResponseMetadata approvalResponseMetadata = new ApprovalResponseMetadata()
                 {
                     ReferenceUrl = approvalRequestMetadata.ReferenceUrl
