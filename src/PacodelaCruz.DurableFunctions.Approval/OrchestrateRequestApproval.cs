@@ -90,10 +90,12 @@ namespace PacodelaCruz.DurableFunctions.Approval
                     if (approvalResponse.Result)
                     {
                         approvalResponseMetadata.Status = "approved";
+                        context.SetCustomStatus("Approved. Congrats, You are super special!");
                     }
                     else
                     {
                         approvalResponseMetadata.Status = "rejected";
+                        context.SetCustomStatus("Rejected. Sorry! Only the best can join us!");
                     }
                 }
                 else
@@ -102,6 +104,7 @@ namespace PacodelaCruz.DurableFunctions.Approval
                         log.Info("The waiting time has exceeded!");
 
                     approvalResponseMetadata.Status = "rejected";
+                    context.SetCustomStatus("Rejected. Sorry! We are extremely busy. Try again in your next life!");
                 }
 
                 if (!timeoutTask.IsCompleted)
@@ -114,10 +117,8 @@ namespace PacodelaCruz.DurableFunctions.Approval
 
                 if (!context.IsReplaying) 
                     log.Info("Moving the blob to the corresponding container");
-
+                
                 await context.CallActivityAsync<string>("MoveBlob", approvalResponseMetadata);
-                context.SetCustomStatus(approvalResponseMetadata.Status);
-
                 return isApproved;
             }
         }
