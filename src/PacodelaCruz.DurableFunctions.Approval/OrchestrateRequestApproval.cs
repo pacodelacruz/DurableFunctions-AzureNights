@@ -29,9 +29,9 @@ namespace PacodelaCruz.DurableFunctions.Approval
                                     TraceWriter log)
         {
             if (!context.IsReplaying)
-                log.Info($"Starting orchestration {context.InstanceId}");
+                log.Info($"Starting the orchestration {context.InstanceId}");
 
-            context.SetCustomStatus("received");
+            context.SetCustomStatus("The application has been received.");
 
             var isApproved = false;
             string meansOfApproval = Environment.GetEnvironmentVariable("Workflow:MeansOfApproval");
@@ -44,7 +44,7 @@ namespace PacodelaCruz.DurableFunctions.Approval
                                                 WorkflowInstanceId = context.InstanceId
                                             });
 
-            context.SetCustomStatus("in review");
+            context.SetCustomStatus("We are reviewing your application. Bear with us.");
 
             // Check whether the approval request is to be sent via Email or Slack based on App Settings
             if (meansOfApproval.Equals("email", StringComparison.OrdinalIgnoreCase))
@@ -119,6 +119,10 @@ namespace PacodelaCruz.DurableFunctions.Approval
                     log.Info("Moving the blob to the corresponding container");
                 
                 await context.CallActivityAsync<string>("MoveBlob", approvalResponseMetadata);
+
+                if (!context.IsReplaying)
+                    log.Info("Orchestration has finished");
+
                 return isApproved;
             }
         }
